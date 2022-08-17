@@ -1,4 +1,6 @@
 import "reflect-metadata";
+import * as dotenv from 'dotenv';
+dotenv.config();
 import { randomUUID } from "crypto";
 import fastify from "fastify";
 import cors from '@fastify/cors';
@@ -14,4 +16,5 @@ routerFactory(routerInstance);
 
 setupSwagger(routerInstance);
 
-routerInstance.listen({ port: 3000 });
+const PORT = process.env.PORT ?? 3000;
+routerInstance.listen({ port: +PORT });

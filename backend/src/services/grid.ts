@@ -1,6 +1,6 @@
-const X_SIZE = 10;
-const Y_SIZE = 10;
-const BIAS_QUANTITY = 20;
+const X_SIZE = process.env.X_SIZE ?? 10;
+const Y_SIZE = process.env.Y_SIZE ?? 10;
+const BIAS_QUANTITY = process.env.BIAS_QUANTITY ?? 20;
 
 const randomIntPositiveInterval = (max: number) => {
     return Math.floor(Math.random() * (max - 1 + 1) + 1);
@@ -8,7 +8,7 @@ const randomIntPositiveInterval = (max: number) => {
 
 const generateRandomNumbers = (numberGenerator: (max: number) => number) => (max: number) => {
     const arr: number[] = [];
-    for (let i = 0; i < BIAS_QUANTITY; i++) {
+    for (let i = 0; i < +BIAS_QUANTITY; i++) {
         arr.push(numberGenerator(max))
     }
     return arr;
@@ -23,7 +23,7 @@ const populateWithBias = (arr: any[][], bias: string) => {
         .forEach(({ x: _x, y: _y }) => arr[+_x][+_y] = bias);
 }
 
-export default async (x: number = X_SIZE, y: number = Y_SIZE) => (valueGenerator: () => string) => (bias: string = '') => {
+export default async (x: number = +X_SIZE, y: number = +Y_SIZE) => (valueGenerator: () => string) => (bias: string = '') => {
     const arr: Array<any[]> = [];
     for (let i = 0; i < x; i++) {
         arr.push([]);
