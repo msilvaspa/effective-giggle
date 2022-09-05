@@ -7,18 +7,12 @@ const alphabet = "abcdefghijklmnopqrstuvwxyz";
 const charGenerator = () => alphabet[Math.floor(Math.random() * alphabet.length)];
 
 export const setGridRouter = (router: FastifyInstance) => {
-    router.register(async function (fastify: any) {
-        fastify.get('/grid', { websocket: true }, (connection: any, req: any) => {
-            const timer = setInterval(async () => {
-                const generatedGrid = (await grid())(charGenerator)(bias)
-                const code = await generateCode(generatedGrid);
-                connection.socket.send(JSON.stringify({ grid: generatedGrid, code }));
-            }, 1000);
-            connection.socket.on('close', () => {
-                clearInterval(timer);
-            });
-        })
+    router.get('/grid', async (request: FastifyRequest, reply: FastifyReply) => {
+        const generatedGrid = (await grid())(charGenerator)(bias)
+        const code = await generateCode(generatedGrid);
+        return ({ grid: generatedGrid, code })
     })
+
 
     const isValid = (param: string) => /^[a-z]{1}$/g.test(param);
 

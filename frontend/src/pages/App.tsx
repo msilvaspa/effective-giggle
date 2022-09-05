@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { FaRegClock } from "react-icons/fa";
 import { Col, Container, Row } from 'react-bootstrap';
-import useSocket from '../hooks/useSocket';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import Table from '../components/Table';
 import './App.css';
-
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
 type Grid = {
   grid: Array<string[]>;
@@ -16,16 +16,26 @@ type Grid = {
 
 function App() {
   const [character, setCharacter] = useState<string>('');
-  const { lastMessage, connect, disconnect, isConnected } = useSocket<Grid>('ws://localhost:3000/grid');
+  const [isEnabled, setIsEnabled] = useState<boolean>(false);
+
+  const { data } = useQuery<Grid>(
+    ['grid'],
+    async () => {
+      const res = await axios.get('http://localhost:3000/grid')
+      return res.data
+    },
+    {
+      enabled: isEnabled,
+      refetchInterval: 1000,
+    },
+  )
 
   const handleConnection = () => {
-    console.log('passou aq');
-
-    if (isConnected) {
-      disconnect();
+    if (isEnabled) {
+      setIsEnabled(false);
       return;
     }
-    connect();
+    setIsEnabled(true);
   }
 
   return (
@@ -38,16 +48,16 @@ function App() {
           <FaRegClock />
         </Col>
         <Col>
-          <Button title={isConnected ? 'STOP' : 'GENERATE 2D GRID'} handleClick={handleConnection} />
+          <Button title={isEnabled ? 'STOP' : 'GENERATE 2D GRID'} handleClick={handleConnection} />
         </Col>
       </Row>
-      {lastMessage ? <Table head={null} rows={lastMessage.grid} /> : null}
+      {data ? <Table head={null} rows={data.grid} /> : null}
       <Row>
-        {isConnected ? 'live' : 'offline'}
+        {isEnabled ? 'live' : 'offline'}
       </Row>
       <Row>{
-        lastMessage?.code ?
-          <Button title={`YOUR CODE: ${lastMessage?.code}`} handleClick={console.log} />
+        data?.code ?
+          <Button title={`YOUR CODE: ${data?.code}`} handleClick={console.log} />
           : null
       }
       </Row>
