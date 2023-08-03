@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: wf-teste
+  namespace: namespace-workflow-1691072154816
+spec:
+  type: LoadBalancer
+  selector:
+    app: wf-teste
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
