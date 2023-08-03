@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wf-teste
+  labels:
+    app: wf-teste
+  namespace: namespace-workflow-1691072154816
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wf-teste
+  template:
+    metadata:
+      labels:
+        app: wf-teste
+    spec:
+      containers:
+        - name: wf-teste
+          image: acrworkflow1691072154816.azurecr.io/image-workflow-1691072154816:latest
+          ports:
+            - containerPort: 3000
